@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+<title>Launch Bar — a tiny rocket powered by progress</title>
+<defs><filter id="tile-shadow" x="0" y="0" width="1024" height="1024" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#162039" flood-opacity=".18"/>
+  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#162039" flood-opacity=".08"/>
+</filter>
+<filter id="object-shadow" x="140" y="180" width="760" height="680" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feDropShadow dx="0" dy="15" stdDeviation="13" flood-color="#164265" flood-opacity=".18"/>
+  <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#164265" flood-opacity=".1"/>
+</filter>
+
+<linearGradient id="tile" x1="280" y1="100" x2="750" y2="924" gradientUnits="userSpaceOnUse"><stop stop-color="#E9E3FF"/><stop offset="1" stop-color="#B4B5EF"/></linearGradient>
+<linearGradient id="shell" x1="520" y1="398" x2="520" y2="626" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset=".52" stop-color="#FCFDFF"/><stop offset="1" stop-color="#DDE5FA"/></linearGradient>
+<linearGradient id="blue" x1="458" y1="390" x2="458" y2="666" gradientUnits="userSpaceOnUse"><stop stop-color="#4DB7FF"/><stop offset="1" stop-color="#126AF0"/></linearGradient>
+<linearGradient id="flame" x1="210" y1="512" x2="357" y2="512" gradientUnits="userSpaceOnUse"><stop stop-color="#FF7A72"/><stop offset="1" stop-color="#FFC367"/></linearGradient>
+<filter id="rocket-shadow" x="160" y="285" width="740" height="500" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feDropShadow dx="-7" dy="15" stdDeviation="12" flood-color="#454884" flood-opacity=".23"/></filter></defs>
+
+<rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" filter="url(#tile-shadow)"/>
+<rect x="102" y="102" width="820" height="820" rx="183" stroke="#FAF8FF" stroke-opacity=".65" stroke-width="3"/>
+<g transform="rotate(-38 512 512)">
+  <g filter="url(#rocket-shadow)">
+    <path d="M349 457 C290 442 239 474 202 512 C239 551 290 582 349 567 Z" fill="url(#flame)"/>
+    <path d="M350 485 C313 472 281 493 262 512 C284 534 315 550 350 539 Z" fill="#FFF1B5"/>
+    <path d="M382 432 L454 371 Q479 348 510 348 L548 348 Q568 348 562 372 L544 448 Z" fill="url(#blue)"/>
+    <path d="M382 592 L454 653 Q479 676 510 676 L548 676 Q568 676 562 652 L544 576 Z" fill="url(#blue)"/>
+    <rect x="326" y="446" width="65" height="132" rx="28" fill="#245EC7"/>
+    <path d="M376 398 H621 C705 398 768 446 808 499 Q818 512 808 525 C768 578 705 626 621 626 H376 Q350 626 350 600 V424 Q350 398 376 398Z" fill="url(#shell)"/>
+    <path d="M378 402 H621 C698 402 757 443 797 492" stroke="white" stroke-opacity=".8" stroke-width="4" stroke-linecap="round"/>
+    <rect x="411" y="455" width="275" height="114" rx="57" fill="#C4D4ED"/>
+    <rect x="417" y="461" width="263" height="102" rx="51" fill="#E3EBF9"/>
+    <rect x="417" y="461" width="185" height="102" rx="51" fill="url(#blue)"/>
+    <path d="M492 486 Q487 483 487 490 V534 Q487 541 492 538 L528 517 Q534 512 528 507Z" fill="white"/>
+  </g>
+</g>
+</svg>

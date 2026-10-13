@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --blue: #007aff; --green: #28c840; --red: #ff3b30; --orange: #ff9500; --gray: #8e8e93;
+    --font: "Inter", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: var(--font);
+    font-feature-settings: "tnum" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+    width: 1280px;
+    background: #f4f4f2;
+    color: #1d1d1f;
+  }
+  section { display: none; padding: 40px 48px 48px; }
+  section.on { display: block; }
+  h1 { font-size: 22px; font-weight: 650; letter-spacing: -0.01em; }
+  h1 small { font-size: 14px; font-weight: 500; color: #86868b; margin-left: 10px; letter-spacing: 0; }
+  .lede { margin-top: 6px; color: #6e6e73; font-size: 13.5px; max-width: 760px; line-height: 1.45; }
+  .cols { display: grid; grid-template-columns: 560px 1fr; gap: 48px; margin-top: 28px; }
+  h2 { font-size: 11px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; color: #86868b; margin-bottom: 12px; }
+
+  /* Menu bar state table */
+  .states { display: grid; grid-template-columns: 128px 1fr 1fr; gap: 10px 14px; align-items: center; }
+  .states .head { font-size: 11px; color: #86868b; }
+  .states .label { font-size: 13px; font-weight: 550; }
+  .states .label span { display: block; font-size: 11.5px; font-weight: 400; color: #86868b; margin-top: 2px; }
+  .bar {
+    height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 10px; gap: 14px; font-size: 13.5px; position: relative; overflow: hidden;
+  }
+  .bar.light { background: linear-gradient(90deg, #d9e4f5, #f1e2da); color: #000; }
+  .bar.light::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.55); }
+  .bar.dark { background: linear-gradient(90deg, #1c2340, #3a2532); color: #fff; }
+  .bar.dark::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.25); }
+  .bar > * { position: relative; }
+  .bar .dim { opacity: .55; font-size: 12.5px; }
+  .item { display: flex; align-items: center; gap: 5px; padding: 2px 6px; border-radius: 5px; height: 22px; }
+  .item.active.light-a { background: rgba(0,0,0,.1); }
+  .item.active.dark-a { background: rgba(255,255,255,.18); }
+  .item .t { font-variant-numeric: tabular-nums; }
+
+  .pbar { width: 30px; height: 8px; border-radius: 4px; background: rgba(128,128,128,.45); position: relative; overflow: hidden; }
+  .pbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; min-width: 8px; }
+  .hist { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .hist i { width: 3px; border-radius: 1px; min-height: 2px; }
+
+  /* Spec notes */
+  .notes { margin-top: 26px; display: grid; grid-template-columns: 128px 1fr; gap: 7px 14px; font-size: 12.5px; line-height: 1.45; }
+  .notes dt { color: #86868b; }
+  .notes dd { color: #3a3a3c; }
+  .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 4px 0 1px; vertical-align: 0; }
+
+  /* Popover */
+  .stage { position: relative; }
+  .menubar {
+    height: 30px; border-radius: 10px 10px 0 0; display: flex; align-items: center; justify-content: flex-end;
+    gap: 16px; padding: 0 14px; font-size: 13.5px;
+  }
+  .stage.light .menubar { background: rgba(255,255,255,.62); color: #000; }
+  .stage.dark .menubar { background: rgba(20,20,24,.55); color: #fff; }
+  .wall { border-radius: 12px; padding-bottom: 28px; overflow: hidden; }
+  .stage.light .wall { background: linear-gradient(160deg, #bcd3f2 0%, #e9d6e8 55%, #f6e4d2 100%); }
+  .stage.dark .wall { background: linear-gradient(160deg, #141b38 0%, #2c1d3d 55%, #3d2430 100%); }
+  .pop {
+    width: 400px; margin: 8px 150px 0 auto; border-radius: 11px; position: relative;
+    box-shadow: 0 0 0 .5px rgba(0,0,0,.25), 0 12px 40px rgba(0,0,0,.22);
+    font-size: 13px;
+  }
+  .pop::before {
+    content: ""; position: absolute; top: -6px; right: 58px; width: 14px; height: 14px; transform: rotate(45deg);
+    border-radius: 2px;
+  }
+  .stage.light .pop, .stage.light .pop::before { background: #f3f3f3; }
+  .stage.dark .pop, .stage.dark .pop::before { background: #2b2b2e; }
+  .stage.dark .pop { color: #f5f5f7; box-shadow: 0 0 0 .5px rgba(255,255,255,.18), 0 12px 40px rgba(0,0,0,.5); }
+  .pop > * { position: relative; }
+  .phead { display: flex; align-items: center; gap: 14px; padding: 12px; }
+  .phead .titles { flex: 1; min-width: 0; }
+  .phead b { font-size: 13px; font-weight: 650; display: block; }
+  .sec { color: rgba(0,0,0,.5); }
+  .stage.dark .sec { color: rgba(255,255,255,.55); }
+  .cap { font-size: 11px; }
+  .divider { height: 1px; background: rgba(0,0,0,.1); }
+  .stage.dark .divider { background: rgba(255,255,255,.1); }
+  .rows { padding: 4px; }
+  .row { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; }
+  .row.hover { background: rgba(0,0,0,.06); }
+  .stage.dark .row.hover { background: rgba(255,255,255,.08); }
+  .row .ic { width: 16px; display: flex; justify-content: center; }
+  .row .mid { flex: 1; min-width: 0; }
+  .row .mid div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .mid .cap { margin-top: 2px; }
+  .row .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .row .right .cap { font-variant-numeric: tabular-nums; }
+  .dbar { width: 72px; height: 4px; border-radius: 2px; background: rgba(0,0,0,.1); position: relative; overflow: hidden; }
+  .stage.dark .dbar { background: rgba(255,255,255,.12); }
+  .dbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
+  .pfoot { display: flex; justify-content: space-between; padding: 8px 12px; font-size: 11px; }
+  .spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(128,128,128,.3); border-top-color: rgba(128,128,128,.9); }
+  svg { display: block; }
+
+  /* Settings */
+  .settings { padding: 16px; }
+  .settings .h { font-weight: 650; margin-bottom: 14px; }
+  .grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 10px; align-items: center; }
+  .grid .l { text-align: right; color: rgba(0,0,0,.5); }
+  .field { height: 22px; border-radius: 5px; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.25), inset 0 .5px 1px rgba(0,0,0,.06); padding: 0 7px; display: flex; align-items: center; font-size: 13px; color: #1d1d1f; flex: 1; }
+  .field.ph { color: rgba(0,0,0,.3); }
+  .field.focus { box-shadow: 0 0 0 3.5px rgba(0,122,255,.35), 0 0 0 .5px rgba(0,122,255,.8); }
+  .hrow { display: flex; gap: 6px; align-items: center; }
+  .btn { height: 22px; padding: 0 10px; border-radius: 5px; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.2), 0 .5px 1px rgba(0,0,0,.12); display: inline-flex; align-items: center; font-size: 13px; }
+  .btn.primary { background: linear-gradient(#3b95ff, #0a7bff); color: #fff; box-shadow: 0 .5px 1px rgba(0,0,0,.2); }
+  .popup { justify-content: space-between; }
+  .seg { display: flex; background: rgba(0,0,0,.06); border-radius: 6px; padding: 2px; gap: 2px; }
+  .seg span { flex: 1; text-align: center; padding: 2px 0; border-radius: 4px; font-size: 12.5px; }
+  .seg span.on { background: #fff; box-shadow: 0 .5px 2px rgba(0,0,0,.18); }
+  .check { display: flex; align-items: center; gap: 6px; }
+  .check i { width: 14px; height: 14px; border-radius: 3.5px; background: #fff; box-shadow: 0 0 0 .5px rgba(0,0,0,.3); display: inline-flex; align-items: center; justify-content: center; }
+  .check i.on { background: #0a7bff; box-shadow: none; }
+  .sfoot { display: flex; justify-content: space-between; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ============ A: Progress ============ -->
+<section id="a">
+  <h1>A · Progress bar <small>default</small></h1>
+  <p class="lede">One 30×8 pt bar shows how far the latest run is through its usual duration, with a short label beside it. Click it for the last 10 runs.</p>
+  <div class="cols">
+    <div>
+      <h2>Menu bar states</h2>
+      <div class="states" id="a-states"></div>
+      <dl class="notes">
+        <dt>Estimate</dt><dd>Median of the last 10 successful runs that match your filters. Here, CI usually takes ~3:50.</dd>
+        <dt>Label</dt><dd><b>62%</b> while running · <b>+0:32</b> when over the estimate · <b>queued</b> · <b>✓</b> / <b>✗</b> when done</dd>
+        <dt>Color</dt><dd><span class="sw" style="background:var(--blue)"></span>running <span class="sw" style="background:var(--orange)"></span>over estimate <span class="sw" style="background:var(--green)"></span>passed <span class="sw" style="background:var(--red)"></span>failed <span class="sw" style="background:var(--gray)"></span>queued/cancelled</dd>
+        <dt>Refresh</dt><dd>Every 10 s while a run is active, 30 s otherwise, plus each time you open the popover. Elapsed time ticks every second.</dd>
+        <dt>Rows</dt><dd>A progress bar while running; finished runs show only their duration. The default branch is omitted. Click a row to open it on GitHub.</dd>
+      </dl>
+    </div>
+    <div class="stage light" id="a-stage"></div>
+  </div>
+</section>
+
+<!-- ============ B: History ============ -->
+<section id="b">
+  <h1>B · Run history <small>switch in Settings</small></h1>
+  <p class="lede">A tiny bar chart of the last 8 runs in the menu bar: height = duration, color = result, newest on the right. The newest bar grows toward the usual height while it runs.</p>
+  <div class="cols">
+    <div>
+      <h2>Menu bar states</h2>
+      <div class="states" id="b-states"></div>
+      <dl class="notes">
+        <dt>Size</dt><dd>8 bars, 3 pt wide, 2 pt gap, 14 pt tall at most (38 × 14 pt). Bars are scaled to the longest run or the estimate, whichever is larger.</dd>
+        <dt>Label</dt><dd>Same as A. Text appears only while a run is active, or as ✓ / ✗ after it finishes.</dd>
+        <dt>Good for</dt><dd>Spotting flakiness at a glance (a red bar among the green), and seeing when CI is running slower than usual.</dd>
+        <dt>Popover</dt><dd>Same as A (shown here in dark mode).</dd>
+      </dl>
+    </div>
+    <div class="stage dark" id="b-stage"></div>
+  </div>
+</section>
+
+<!-- ============ Setup ============ -->
+<section id="s">
+  <h1>Setup <small>first launch, or the gear icon</small></h1>
+  <p class="lede">Paste a token, then pick a repository (the menu lists your 100 most recently pushed repos) and a workflow. The branch filter and “Only my runs” are optional.</p>
+  <div class="cols" style="grid-template-columns: 1fr">
+    <div class="stage light" id="s-stage"></div>
+  </div>
+</section>
+
+<script>
+const C = { blue: "var(--blue)", green: "var(--green)", red: "var(--red)", orange: "var(--orange)", gray: "var(--gray)" };
+const ICON = {
+  check: c => `<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.4l2.6 2.6L10 3" fill="none" stroke="${c}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  x: c => `<svg width="11" height="11" viewBox="0 0 11 11"><path d="M2 2l7 7M9 2l-7 7" fill="none" stroke="${c}" stroke-width="1.9" stroke-linecap="round"/></svg>`,
+  minus: c => `<svg width="11" height="11" viewBox="0 0 11 11"><path d="M2 5.5h7" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  refresh: `<svg width="14" height="14" viewBox="0 0 14 14"><path d="M11.5 7a4.5 4.5 0 1 1-1.3-3.2M11.5 1.8v2.6H8.9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  gear: `<svg width="15" height="15" viewBox="0 0 15 15"><circle cx="7.5" cy="7.5" r="2.1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 1.5v1.6M7.5 11.9v1.6M1.5 7.5h1.6M11.9 7.5h1.6M3.3 3.3l1.1 1.1M10.6 10.6l1.1 1.1M3.3 11.7l1.1-1.1M10.6 4.4l1.1-1.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="7.5" cy="7.5" r="4.3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>`,
+  chevron: `<svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  updown: `<svg width="9" height="12" viewBox="0 0 9 12"><path d="M1.5 4.5L4.5 1.5l3 3M1.5 7.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+
+const pbar = (f, c) => `<span class="pbar">${f > 0 ? `<i style="width:${Math.min(f,1)*100}%;background:${c}"></i>` : ""}</span>`;
+const hist = bars => `<span class="hist">${bars.map(([h,c]) => `<i style="height:${Math.max(2, h*14)}px;background:${c}"></i>`).join("")}</span>`;
+const item = (glyph, text, active, mode) => `<span class="item${active ? " active " + mode + "-a" : ""}">${glyph}${text ? `<span class="t">${text}</span>` : ""}</span>`;
+const others = `<span class="dim">Mon 13 Oct</span><span>9:41</span>`;
+const clock = `<span>9:41</span>`;
+const bars = (b, text, active, mode) => `<div class="bar ${mode}">${item(b, text, active, mode)}${clock}</div>`;
+
+// Last 7 completed runs (oldest → newest) for the history glyph, scaled to 7:41.
+const past = [[.50,C.green],[.49,C.green],[.33,C.gray],[1,C.red],[.51,C.green],[.48,C.green],[.50,C.green]];
+const STATES = [
+  { label: "Running", sub: "2:22 of ~3:50", a: [pbar(.62, C.blue), "62%"], b: [hist([...past, [.31, C.blue]]), "62%"] },
+  { label: "Slower than usual", sub: "4:22, estimate 3:50", a: [pbar(1, C.orange), "+0:32"], b: [hist([...past, [.57, C.orange]]), "+0:32"] },
+  { label: "Queued", sub: "waiting for a runner", a: [pbar(0, C.gray), "queued"], b: [hist([...past, [0, C.gray]]), "queued"] },
+  { label: "Passed", sub: "finished in 3:41", a: [pbar(1, C.green), "✓"], b: [hist([...past, [.48, C.green]]), "✓"] },
+  { label: "Failed", sub: "finished in 7:41", a: [pbar(1, C.red), "✗"], b: [hist([...past.slice(1), [.48, C.green], [1, C.red]]), "✗"] },
+];
+for (const key of ["a", "b"]) {
+  document.getElementById(`${key}-states`).innerHTML =
+    `<div></div><div class="head">Light menu bar</div><div class="head">Dark menu bar</div>` +
+    STATES.map(s => `<div class="label">${s.label}<span>${s.sub}</span></div>${bars(s[key][0], s[key][1], false, "light")}${bars(s[key][0], s[key][1], false, "dark")}`).join("");
+}
+
+const RUNS = [
+  { s: "running", title: "Add dark mode to the settings page", meta: "#1482 · octocat · 2 min ago", right: "62% · 1:28 left", d: 142, hover: false },
+  { s: "success", title: "Speed up image uploads", meta: "#1481 · monalisa · 9 min ago", right: "3:41", d: 221 },
+  { s: "success", title: "Cache API responses in the dashboard", meta: "#1479 · hubot · 27 min ago", right: "3:54", d: 234, hover: true },
+  { s: "failure", title: "Rewrite the onboarding flow with the new design", meta: "#1476 · new-onboarding · octocat · 34 min ago", right: "7:41", d: 461 },
+  { s: "cancelled", title: "Move search indexing to a background job", meta: "#1474 · search-worker · monalisa · 36 min ago", right: "2:35", d: 155 },
+  { s: "success", title: "Fix timezone handling in reports", meta: "#1471 · hubot · 41 min ago", right: "3:52", d: 232 },
+  { s: "success", title: "Show the owner on each project card", meta: "#1469 · project-owner · octocat · 53 min ago", right: "3:48", d: 228 },
+  { s: "success", title: "Retry webhook deliveries with backoff", meta: "#1468 · webhook-retries · monalisa · 53 min ago", right: "3:32", d: 212 },
+];
+const COLOR = { running: C.blue, success: C.green, failure: C.red, cancelled: C.gray };
+const icon = s => s === "running" ? `<span class="spin"></span>` : s === "success" ? ICON.check(C.green) : s === "failure" ? ICON.x(C.red) : ICON.minus(C.gray);
+
+function popover(glyph, text) {
+  return `<div class="wall"><div class="menubar">${item(glyph, text, true, "x")}${others}</div>
+    <div class="pop">
+      <div class="phead"><div class="titles"><b>CI</b><div class="cap sec">acme/web · usually 3:50</div></div><span class="sec">${ICON.refresh}</span><span class="sec">${ICON.gear}</span></div>
+      <div class="divider"></div>
+      <div class="rows">${RUNS.map(r => `
+        <div class="row${r.hover ? " hover" : ""}">
+          <span class="ic">${icon(r.s)}</span>
+          <div class="mid"><div>${r.title}</div><div class="cap sec">${r.meta}</div></div>
+          <div class="right"><span class="cap sec">${r.right}</span>${r.s === "running" ? `<span class="dbar"><i style="width:62%;background:${COLOR[r.s]}"></i></span>` : ""}</div>
+        </div>`).join("")}</div>
+      <div class="divider"></div>
+      <div class="pfoot sec"><span>Updated 4 sec ago</span><span>Quit</span></div>
+    </div></div>`;
+}
+document.getElementById("a-stage").innerHTML = popover(pbar(.62, C.blue), "62%");
+document.getElementById("b-stage").innerHTML = popover(hist([...past, [.31, C.blue]]), "62%");
+for (const el of document.querySelectorAll("#a-stage .item.active")) el.classList.add("light-a");
+for (const el of document.querySelectorAll("#b-stage .item.active")) el.classList.add("dark-a");
+
+document.getElementById("s-stage").innerHTML = `<div class="wall" style="max-width:700px"><div class="menubar">${item(`<svg width="15" height="13" viewBox="0 0 15 13"><rect x="1" y="7" width="3" height="5" rx="1" fill="#000"/><rect x="6" y="3" width="3" height="9" rx="1" fill="#000"/><rect x="11" y="0" width="3" height="12" rx="1" fill="#000"/></svg>`, "", true, "x")}${others}</div>
+  <div class="pop" style="margin-right:100px">
+    <div class="settings">
+      <div class="h">Checkmate</div>
+      <div class="grid">
+        <div class="l">Token</div><div class="hrow"><span class="field">••••••••••••••••••••••••</span><span class="btn">Paste</span></div>
+        <div class="l">Repository</div><div class="hrow"><span class="field focus">acme/web</span><span class="sec">${ICON.chevron}</span></div>
+        <div class="l">Workflow</div><div class="hrow"><span class="btn popup" style="flex:1">CI<span class="sec">${ICON.updown}</span></span></div>
+        <div class="l">Branch</div><div class="hrow"><span class="field ph">All branches</span></div>
+        <div></div><div class="check"><i></i>Only my runs</div>
+        <div class="l">Menu bar</div><div class="seg"><span class="on">Progress</span><span>History</span></div>
+        <div></div><div class="check"><i class="on">${ICON.check("#fff")}</i>Launch at login</div>
+      </div>
+      <div class="sfoot"><span class="btn">Quit</span><span class="btn primary">Done</span></div>
+    </div>
+  </div></div>`;
+
+const which = new URLSearchParams(location.search).get("s") || "a";
+document.getElementById(which).classList.add("on");
+</script>
+</body>
+</html>

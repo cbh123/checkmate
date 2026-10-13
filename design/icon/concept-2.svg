@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+<title>Checkmate — a cheerful, chunky checkmark</title>
+<defs><filter id="tile-shadow" x="0" y="0" width="1024" height="1024" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#162039" flood-opacity=".18"/>
+  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#162039" flood-opacity=".08"/>
+</filter>
+<filter id="object-shadow" x="140" y="180" width="760" height="680" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feDropShadow dx="0" dy="15" stdDeviation="13" flood-color="#164265" flood-opacity=".18"/>
+  <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#164265" flood-opacity=".1"/>
+</filter>
+
+<linearGradient id="tile" x1="260" y1="100" x2="720" y2="924" gradientUnits="userSpaceOnUse"><stop stop-color="#C2F8CE"/><stop offset=".52" stop-color="#8AE6A8"/><stop offset="1" stop-color="#51CE8E"/></linearGradient>
+<linearGradient id="check" x1="535" y1="280" x2="535" y2="720" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEFFF3"/></linearGradient>
+<filter id="check-shadow" x="190" y="220" width="670" height="560" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="19" stdDeviation="15" flood-color="#176D47" flood-opacity=".21"/><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#176D47" flood-opacity=".13"/></filter></defs>
+
+<rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" filter="url(#tile-shadow)"/>
+<rect x="102" y="102" width="820" height="820" rx="183" stroke="#EEFFF1" stroke-opacity=".6" stroke-width="3"/>
+<path d="M305 507 L441 648 L710 363" stroke="url(#check)" stroke-width="148" stroke-linecap="round" stroke-linejoin="round" filter="url(#check-shadow)"/>
+<ellipse cx="683" cy="349" rx="12" ry="17" fill="#185B42"/>
+<ellipse cx="731" cy="349" rx="12" ry="17" fill="#185B42"/>
+<path d="M695 383 Q707 397 719 383" stroke="#185B42" stroke-width="9" stroke-linecap="round"/>
+<ellipse cx="668" cy="379" rx="12" ry="8" fill="#FFA58E" fill-opacity=".8"/>
+<ellipse cx="746" cy="379" rx="12" ry="8" fill="#FFA58E" fill-opacity=".8"/>
+
+</svg>
